@@ -5,8 +5,6 @@ export const metadata = {
   description: "개발어사전 프로젝트에 기여해주신 분들",
 };
 
-export const runtime = "edge";
-
 export default function ContributorsPage() {
   const contributors = [
     {
