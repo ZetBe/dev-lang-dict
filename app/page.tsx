@@ -4,6 +4,7 @@ import Search from "@/components/Search";
 import CuriosityBanner from "@/components/CuriosityBanner";
 
 export const revalidate = 0; // Disable static caching for now
+export const runtime = "edge";
 
 export default async function Home() {
   const terms = await getRecentTerms();
