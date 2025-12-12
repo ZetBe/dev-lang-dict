@@ -3,7 +3,7 @@ import TermCard from "@/components/TermCard";
 import TermsClient from "./TermsClient";
 
 export const revalidate = 0;
-export const runtime = "force-static";
+export const dynamic = "force-static";
 
 export default async function TermsPage() {
   const terms = await getAllTerms();
