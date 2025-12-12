@@ -4,6 +4,7 @@ import TermsClient from "./TermsClient";
 
 export const revalidate = 0;
 export const dynamic = "force-static";
+export const runtime = "edge";
 
 export default async function TermsPage() {
   const terms = await getAllTerms();

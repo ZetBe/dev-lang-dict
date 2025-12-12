@@ -22,6 +22,7 @@ const WarningIcon = () => (
 
 export const revalidate = 0;
 export const dynamic = "force-static";
+export const runtime = "edge";
 
 interface PageProps {
   params: Promise<{

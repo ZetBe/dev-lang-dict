@@ -5,6 +5,7 @@ import CuriosityBanner from "@/components/CuriosityBanner";
 
 export const revalidate = 0; // Disable static caching for now
 export const dynamic = "force-static";
+export const runtime = "edge";
 
 export default async function Home() {
   const terms = await getRecentTerms();
