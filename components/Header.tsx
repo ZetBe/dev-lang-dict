@@ -37,6 +37,12 @@ export default function Header() {
               커뮤니티
             </button>
             <Link
+              href="/contributors"
+              className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+            >
+              기여자
+            </Link>
+            <Link
               href="https://github.com/ZetBe/dev-lang-dict/issues/new"
               target="_blank"
               className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
@@ -50,9 +56,9 @@ export default function Header() {
       <AnimatePresence>
         {showToast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            initial={{ opacity: 0, y: -20, x: "150%" }}
+            animate={{ opacity: 1, y: 0, x: "150%" }}
+            exit={{ opacity: 0, y: -20, x: "150%" }}
             className="fixed top-20 left-1/2 z-50 rounded-full border border-zinc-800 bg-zinc-950/90 px-6 py-2 text-sm text-white backdrop-blur shadow-2xl"
           >
             🚧 커뮤니티 기능은 준비 중입니다
