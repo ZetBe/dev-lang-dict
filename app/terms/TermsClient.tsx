@@ -74,13 +74,10 @@ export default function TermsClient({ initialTerms }: TermsClientProps) {
       <div className="flex flex-col lg:flex-row justify-between items-start mb-12 gap-8">
         {/* Header Section */}
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight text-white pb-1">
-            전체 보기
-          </h1>
-          <p className="text-zinc-400">한번에 보고 싶은 사람들을 위해</p>
-          <p className="text-zinc-400">
-            모으고 모아 {initialTerms.length}개의 용어들을 모았습니다.
-          </p>
+          <h2 className="text-zinc-400">한번에 보고 싶은 사람들을 위해</h2>
+          <h2 className="text-zinc-400">
+            모으고 모아 {filteredTerms.length}개의 용어들을 모았습니다.
+          </h2>
 
           <div className="relative mt-4 max-w-md">
             <button

@@ -13,16 +13,12 @@ export default function TTSButton({ text }: TTSButtonProps) {
   const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
-    // Function to update available voices
     const updateVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
       setVoices(availableVoices);
     };
 
-    // Initial load
     updateVoices();
-
-    // Event listener for when voices are loaded/changed (important for Chrome/Safari)
     window.speechSynthesis.onvoiceschanged = updateVoices;
 
     return () => {
@@ -33,16 +29,15 @@ export default function TTSButton({ text }: TTSButtonProps) {
   const handleSpeak = () => {
     if (!window.speechSynthesis) return;
 
-    // Cancel any ongoing speech
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const textToSpeak = text.replace(/-/g, "");
 
-    // Select a good English voice
-    // Preference: Google US English -> Microsoft Zira -> Any en-US -> First available
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
     const preferredVoice =
       voices.find((v) => v.name.includes("Google US English")) ||
-      voices.find((v) => v.name.includes("Samantha")) || // Mac default
+      voices.find((v) => v.name.includes("Samantha")) ||
       voices.find((v) => v.lang === "en-US") ||
       voices[0];
 
