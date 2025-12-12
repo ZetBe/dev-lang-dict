@@ -1,6 +1,7 @@
 import { getTermBySlug } from "@/utils/api";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import TTSButton from "@/components/TTSButton";
 
 export const revalidate = 0;
 
@@ -19,15 +20,40 @@ export default async function TermPage(props: PageProps) {
     notFound();
   }
 
+  // Determine TTS text: use guide if available, otherwise term name
+  const ttsText =
+    term.tts_guide && term.tts_guide.length > 0
+      ? term.tts_guide.join(" ")
+      : term.term;
+
   return (
-    <div className="min-h-screen flex flex-col p-8 font-[family-name:var(--font-geist-sans)] max-w-4xl mx-auto">
+    <div className="min-h-screen flex flex-col p-8 max-w-4xl mx-auto">
       <div className="mb-8">
         <Link
           href="/"
           className="text-zinc-500 hover:text-blue-400 transition-colors flex items-center gap-2"
         >
-          ← Back to Dictionary
+          ← 돌아가기
         </Link>
+      </div>
+
+      <div className="flex flex-col gap-4 mb-8 justify-center items-center">
+        <div className="flex items-center gap-4">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white font-mono">
+            {term.term}
+          </h1>
+          <TTSButton text={ttsText} />
+          {term.ipa && (
+            <span className="text-2xl text-zinc-500 font-serif italic mt-2 font-jetbrains-mono">
+              /{term.ipa}/
+            </span>
+          )}
+          {term.pronunciation_ko && (
+            <span className="text-xl text-blue-400 font-mono bg-blue-500/10 px-3 py-1 rounded-lg mt-2">
+              [{term.pronunciation_ko}]
+            </span>
+          )}
+        </div>
       </div>
 
       <main className="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden">
@@ -35,26 +61,10 @@ export default async function TermPage(props: PageProps) {
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
         <div className="relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-8 mb-8">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-white">
-              {term.term}
-            </h1>
-            {term.ipa && (
-              <span className="text-2xl text-zinc-500 font-serif italic mb-2">
-                /{term.ipa}/
-              </span>
-            )}
-            {term.pronunciation_ko && (
-              <span className="text-xl text-blue-400 font-mono mb-2 bg-blue-500/10 px-3 py-1 rounded-lg">
-                [{term.pronunciation_ko}]
-              </span>
-            )}
-          </div>
-
           <div className="space-y-10">
             <section>
               <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-3">
-                Definition
+                정의
               </h3>
               <p className="text-xl md:text-2xl text-zinc-200 leading-relaxed">
                 {term.definition}
@@ -64,7 +74,7 @@ export default async function TermPage(props: PageProps) {
             {term.tts_guide && term.tts_guide.length > 0 && (
               <section>
                 <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-3">
-                  Pronunciation Guide
+                  발음 가이드
                 </h3>
                 <div className="flex gap-2 flex-wrap">
                   {term.tts_guide.map((part, index) => (
@@ -82,7 +92,7 @@ export default async function TermPage(props: PageProps) {
             {term.etymology && (
               <section className="bg-zinc-900/50 p-6 rounded-xl border border-zinc-800">
                 <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-3">
-                  Etymology & Context
+                  역사 & 맥락
                 </h3>
                 <p className="text-zinc-300">{term.etymology}</p>
               </section>
@@ -91,7 +101,7 @@ export default async function TermPage(props: PageProps) {
             {term.common_mistakes && (
               <section className="bg-red-500/5 p-6 rounded-xl border border-red-500/10">
                 <h3 className="text-sm font-bold text-red-400 uppercase tracking-widest mb-3">
-                  Common Mistakes
+                  흔한 실수
                 </h3>
                 <p className="text-zinc-300">{term.common_mistakes}</p>
               </section>
@@ -99,12 +109,13 @@ export default async function TermPage(props: PageProps) {
 
             <section className="pt-8 border-t border-zinc-800 flex flex-wrap gap-2">
               {term.tags?.map((tag) => (
-                <span
+                <Link
                   key={tag}
-                  className="text-sm text-zinc-500 bg-zinc-900 px-3 py-1 rounded-full border border-zinc-800"
+                  href={`/terms?tag=${tag}`}
+                  className="text-sm font-jetbrains-mono text-zinc-500 bg-zinc-900 px-3 py-1 rounded-full border border-zinc-800"
                 >
                   #{tag}
-                </span>
+                </Link>
               ))}
             </section>
           </div>
