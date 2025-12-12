@@ -1,6 +1,7 @@
 import { getRecentTerms } from "@/utils/api";
 import TermCard from "@/components/TermCard";
 import Search from "@/components/Search";
+import CuriosityBanner from "@/components/CuriosityBanner";
 
 export const revalidate = 0; // Disable static caching for now
 
@@ -9,9 +10,11 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen flex flex-col p-8 font-[family-name:var(--font-geist-sans)] max-w-7xl mx-auto">
-      <header className="flex flex-col gap-6 items-center text-center py-20">
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 text-glow">
-          개발어사전(Dev Lang Dict)
+      <header className="flex flex-col items-center text-center py-10 pb-10">
+        <CuriosityBanner />
+
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 text-glow mt-2">
+          개발어사전
         </h1>
         <p className="text-xl md:text-2xl text-zinc-400">개발자용 발음사전</p>
 
@@ -28,7 +31,6 @@ export default async function Home() {
         ) : (
           <div className="text-center py-20 text-zinc-500 glass-panel rounded-2xl">
             <p className="text-xl">등록된 용어가 없습니다.</p>
-            <p className="text-sm mt-2">Supabase 테이블을 확인해주세요.</p>
           </div>
         )}
       </main>

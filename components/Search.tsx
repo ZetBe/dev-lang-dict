@@ -54,9 +54,9 @@ export default function Search() {
 
   return (
     <div className="w-full max-w-md mt-6 relative group" ref={searchRef}>
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-zinc-500 to-zinc-300 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
 
-      <div className="relative">
+      <div className="relative shadow-xl">
         <Input
           type="text"
           value={query}
@@ -65,13 +65,13 @@ export default function Search() {
             if (results.length > 0) setShowResults(true);
           }}
           placeholder="검색할 용어를 입력하세요..."
-          className="w-full bg-black/80 border-zinc-800 text-white placeholder:text-zinc-600 text-lg h-14 rounded-lg focus-visible:ring-blue-500/50"
+          className="w-full bg-zinc-950/80 backdrop-blur-sm border-zinc-700 text-white placeholder:text-zinc-500 text-lg h-14 rounded-lg focus-visible:ring-zinc-400 focus-visible:border-zinc-500 transition-all font-medium"
         />
       </div>
 
       {/* Results Dropdown */}
       {showResults && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-xl border border-zinc-800 rounded-xl overflow-hidden shadow-2xl z-50">
+        <div className="absolute top-full left-0 right-0 mt-3 bg-zinc-950/95 backdrop-blur-xl border border-zinc-700 rounded-xl overflow-hidden shadow-2xl z-50">
           {isLoading ? (
             <div className="p-4 text-center text-zinc-500">검색 중...</div>
           ) : results.length > 0 ? (
