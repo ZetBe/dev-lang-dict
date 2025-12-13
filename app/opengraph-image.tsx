@@ -10,7 +10,7 @@ export const size = {
 export const contentType = "image/png";
 
 // Cloudflare Pages requires Edge runtime
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export default async function Image() {
   // Load the background image using fetch which is supported in Edge
