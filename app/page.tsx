@@ -3,11 +3,6 @@ import TermCard from "@/components/TermCard";
 import Search from "@/components/Search";
 import CuriosityBanner from "@/components/CuriosityBanner";
 
-export const metadata = {
-  title: "개발어사전",
-  description: "개발자용 발음사전",
-};
-
 export default async function Home() {
   const terms = await getRecentTerms();
 
