@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import TTSButton from "@/components/TTSButton";
 
-// 아이콘 (heroicons 등 사용하신다면 교체하세요. 여기선 SVG 직접 삽입)
 const WarningIcon = () => (
   <svg
     className="w-5 h-5 text-red-400 mt-0.5 shrink-0"
@@ -20,14 +19,43 @@ const WarningIcon = () => (
   </svg>
 );
 
-export const revalidate = 0;
-export const dynamic = "force-static";
-export const runtime = "nodejs";
-
 interface PageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const term = await getTermBySlug(slug);
+
+  if (!term) {
+    return {
+      title: "Term Not Found",
+      description: "The requested term could not be found.",
+    };
+  }
+
+  const title = `${term.term} | 개발어사전`;
+  const description =
+    term.definition.length > 160
+      ? `${term.definition.slice(0, 160)}...`
+      : term.definition;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }
 
 export default async function TermPage(props: PageProps) {

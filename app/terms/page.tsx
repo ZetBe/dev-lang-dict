@@ -1,10 +1,10 @@
 import { getAllTerms } from "@/utils/api";
-import TermCard from "@/components/TermCard";
 import TermsClient from "./TermsClient";
 
-export const revalidate = 0;
-export const dynamic = "force-static";
-export const runtime = "nodejs";
+export const metadata = {
+  title: "용어 목록 | 개발어사전",
+  description: "개발자용 발음사전",
+};
 
 export default async function TermsPage() {
   const terms = await getAllTerms();
