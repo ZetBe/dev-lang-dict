@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <meta name="apple-mobile-web-app-title" content="devlangdict" />
-
+      <GoogleTagManager gtmId="GTM-K3N5HMVM" />
       <body
         className={`${geistSans.variable} ${jetBrainsMono.variable} antialiased min-h-screen bg-background flex flex-col`}
       >
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Analytics />
         <Footer />
       </body>
+      <GoogleAnalytics gaId="G-24CZP5R0DJ" />
     </html>
   );
 }

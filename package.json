@@ -12,6 +12,7 @@
     "deploy": "pnpm run pages:build && wrangler pages deploy"
   },
   "dependencies": {
+    "@next/third-parties": "^16.0.10",
     "@radix-ui/react-slot": "^1.2.4",
     "@supabase/supabase-js": "^2.87.0",
     "@vercel/analytics": "^1.6.1",
