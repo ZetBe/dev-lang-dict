@@ -19,6 +19,9 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "개발어사전",
   description: "개발자용 발음사전",
+  other: {
+    "naver-site-verification": "b55dfa7a44db716c11ecd78111457c47743270ae",
+  },
 };
 
 export default function RootLayout({
