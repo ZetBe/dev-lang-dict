@@ -101,7 +101,7 @@ export default function LoginPage() {
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">환영합니다</h1>
             <p className="text-balance text-muted-foreground">
-              이메일로 로그인하거나 소셜 계정을 이용하세요
+              이메일은 아직 지원되지 않습니다. 소셜 계정을 이용해주세용
             </p>
           </div>
           <div className="grid gap-4">

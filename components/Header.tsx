@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeButton } from "./ThemeButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   SearchIcon,
@@ -11,18 +11,43 @@ import {
   Users,
   Flag,
   LogIn,
+  LogOut,
   MessageSquare,
   Moon,
   Sun,
 } from "lucide-react";
 import SearchModal from "@/components/SearchModal";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { createBrowserClient } from "@supabase/ssr";
 
 export default function Header() {
   const [showToast, setShowToast] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user);
+    };
+    checkUser();
+  }, [supabase]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsLoggedIn(false);
+    router.refresh();
+  };
 
   const handleCommunityClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -146,15 +171,27 @@ export default function Header() {
 
             <div className="w-px h-8 bg-zinc-800 mx-2 hidden sm:block" />
 
-            <Link
-              href="/login"
-              className="flex flex-col items-center gap-1 px-2 group"
-            >
-              <LogIn className="h-6 w-6 text-zinc-400 group-hover:text-blue-400 transition-colors" />
-              <span className="text-[10px] text-zinc-400 group-hover:text-blue-400 transition-colors hidden sm:block">
-                로그인
-              </span>
-            </Link>
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="flex flex-col items-center gap-1 px-2 group"
+              >
+                <LogOut className="h-6 w-6 text-zinc-400 group-hover:text-red-400 transition-colors" />
+                <span className="text-[10px] text-zinc-400 group-hover:text-red-400 transition-colors hidden sm:block">
+                  로그아웃
+                </span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="flex flex-col items-center gap-1 px-2 group"
+              >
+                <LogIn className="h-6 w-6 text-zinc-400 group-hover:text-blue-400 transition-colors" />
+                <span className="text-[10px] text-zinc-400 group-hover:text-blue-400 transition-colors hidden sm:block">
+                  로그인
+                </span>
+              </Link>
+            )}
           </nav>
         </div>
       </header>
