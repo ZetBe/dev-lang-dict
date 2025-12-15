@@ -14,10 +14,10 @@ interface TermCardProps {
 
 export default function TermCard({ term }: TermCardProps) {
   return (
-    <Card className="h-full bg-black/40 backdrop-blur-md border-zinc-800 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden relative group">
+    <Card className="h-full bg-card/50 backdrop-blur-md border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden relative group">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-2xl font-jetbrains-mono font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400 group-hover:from-indigo-300 group-hover:to-slate-400 transition-all">
+          <CardTitle className="text-2xl font-jetbrains-mono font-bold text-foreground group-hover:text-primary transition-colors">
             <Link
               href={`/terms/${term.slug}`}
               className="before:absolute before:inset-0 focus:outline-none"
@@ -26,7 +26,7 @@ export default function TermCard({ term }: TermCardProps) {
             </Link>
           </CardTitle>
           {term.pronunciation_ko && (
-            <span className="text-xs font-jetbrains-mono text-zinc-500 border border-zinc-800 px-2 py-1 rounded bg-black/20">
+            <span className="text-xs font-jetbrains-mono text-muted-foreground border border-zinc-800 px-2 py-1 rounded ">
               {term.pronunciation_ko}
             </span>
           )}

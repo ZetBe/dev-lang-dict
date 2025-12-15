@@ -4,7 +4,52 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Enforce Dark Mode by default for this premium look */
+  /* Light Mode Defaults */
+  --background: #ffffff;
+  --foreground: #09090b;
+
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #18181b;
+
+  --radius: 0.6rem;
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  --primary-glow: rgba(0, 0, 0, 0.1);
+  --card-border: #e4e4e7;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+.dark {
+  /* Dark Mode Overrides */
   --background: #0a0a0a;
   --foreground: #ededed;
 
@@ -16,7 +61,7 @@
   /* Cards & Surfaces */
   --card: #171717;
   --card-foreground: #ededed;
-  --card-bg: #171717; /* Legacy support if needed */
+  --card-bg: #171717;
   --card-border: #333333;
   --popover: #171717;
   --popover-foreground: #ededed;
@@ -31,18 +76,13 @@
   --border: #333333;
   --input: #333333;
   --ring: #3b82f6;
-  --radius: 0.6rem;
 
-  /* Charts - keeping default colors or adjusting if needed */
+  /* Charts */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-
-  /* Typography */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 body {

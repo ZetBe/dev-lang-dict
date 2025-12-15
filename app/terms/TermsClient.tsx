@@ -1,172 +1,67 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Term } from "@/utils/types";
 import TermCard from "@/components/TermCard";
 import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { SearchIcon, X } from "lucide-react";
+import { X } from "lucide-react";
 
 interface TermsClientProps {
   initialTerms: Term[];
 }
 
 export default function TermsClient({ initialTerms }: TermsClientProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  // URL state
+  const router = useRouter();
+  const searchQuery = searchParams.get("search")?.toLowerCase() || "";
   const selectedTag = searchParams.get("tag");
-  const searchQuery = searchParams.get("q") || "";
 
-  // Local state for modal
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [localSearch, setLocalSearch] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  // Get all unique tags for filter UI (optional, or remove if moving to SearchModal completely)
+  // For now keeping a simple tag list if desired, or just removing it to match "Clean" requirement.
+  // The user asked to "migrate related functions to header".
+  // So I will remove the tag list here and assume SearchModal handles discovery.
+  // But wait, the user might still want to see tags to click on?
+  // "header의 검색 영역을 클릭하면... 태그를 보여줘" -> Tags in Header Modal.
+  // So I can remove the tag list from here to clean up.
 
-  // Sync local search with URL when modal opens
-  useEffect(() => {
-    if (isSearchOpen) {
-      setLocalSearch(searchQuery);
-      // Small timeout to ensure modal is mounted before focus
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  }, [isSearchOpen, searchQuery]);
-
-  // Update URL helper
-  const updateFilters = (tag: string | null, query: string) => {
-    const params = new URLSearchParams();
-    if (tag) params.set("tag", tag);
-    if (query) params.set("q", query);
-    router.push(`/terms?${params.toString()}`);
-    setIsSearchOpen(false); // Close modal on update
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateFilters(selectedTag, localSearch);
-  };
-
-  // Extract all unique tags
-  const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    initialTerms.forEach((term) => {
-      term.tags?.forEach((tag) => tags.add(tag));
-    });
-    return Array.from(tags).sort();
-  }, [initialTerms]);
-
-  // Filter terms based on selection and search
+  // Filter terms
   const filteredTerms = useMemo(() => {
     return initialTerms.filter((term) => {
-      const matchTag = selectedTag ? term.tags?.includes(selectedTag) : true;
-      const matchQuery = searchQuery
-        ? term.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          term.definition.toLowerCase().includes(searchQuery.toLowerCase())
-        : true;
-      return matchTag && matchQuery;
+      const matchesSearch =
+        !searchQuery ||
+        term.term.toLowerCase().includes(searchQuery) ||
+        term.definition.toLowerCase().includes(searchQuery) ||
+        (term.tags &&
+          term.tags.some((tag) => tag.toLowerCase().includes(searchQuery)));
+
+      const matchesTag =
+        !selectedTag || (term.tags && term.tags.includes(selectedTag));
+
+      return matchesSearch && matchesTag;
     });
-  }, [initialTerms, selectedTag, searchQuery]);
+  }, [initialTerms, searchQuery, selectedTag]);
+
+  const clearFilters = () => {
+    router.push("/terms");
+  };
 
   return (
-    <div className="container mx-auto p-8 py-12 relative">
-      <div className="flex flex-col lg:flex-row justify-between items-start mb-12 gap-8">
-        {/* Header Section */}
-        <div className="flex flex-col gap-2">
-          <h2 className="text-zinc-400">한번에 보고 싶은 사람들을 위해</h2>
-          <h2 className="text-zinc-400">
-            모으고 모아 {filteredTerms.length}개의 용어들을 모았습니다.
-          </h2>
-
-          <div className="relative mt-4 max-w-md">
+    <div className="container mx-auto p-4 sm:p-8 py-12 relative animate-in fade-in duration-500">
+      <div className="flex flex-col gap-4 mb-12">
+        <h2 className="text-2xl font-bold text-foreground">모든 용어</h2>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <span>총 {filteredTerms.length}개의 용어가 있습니다.</span>
+          {(searchQuery || selectedTag) && (
             <button
-              onClick={() => setIsSearchOpen(true)}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-md bg-black/50 border border-zinc-800 text-zinc-400 hover:text-zinc-300 hover:border-zinc-700 transition-colors text-sm"
+              onClick={clearFilters}
+              className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors ml-4"
             >
-              <SearchIcon className="h-4 w-4" />
-              <span>
-                {searchQuery || selectedTag ? (
-                  <span className="text-white">
-                    {searchQuery && `"${searchQuery}"`}
-                    {searchQuery && selectedTag && " + "}
-                    {selectedTag && `#${selectedTag}`}
-                  </span>
-                ) : (
-                  "검색하거나 태그를 선택하세요..."
-                )}
-              </span>
+              <X className="h-3 w-3" />
+              필터 초기화
             </button>
-          </div>
+          )}
         </div>
-
-        {/* Search Modal */}
-        {isSearchOpen && (
-          <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4">
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setIsSearchOpen(false)}
-            />
-
-            {/* Modal Content */}
-            <div className="relative w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-              <form
-                onSubmit={handleSearchSubmit}
-                className="relative border-b border-zinc-800"
-              >
-                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                <Input
-                  ref={inputRef}
-                  value={localSearch}
-                  onChange={(e) => setLocalSearch(e.target.value)}
-                  placeholder="검색어 입력 후 Enter..."
-                  className="w-full pl-10 py-6 bg-transparent border-none text-lg focus-visible:ring-0 rounded-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(false)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-zinc-800 rounded-full transition-colors"
-                >
-                  <X className="h-4 w-4 text-zinc-400" />
-                </button>
-              </form>
-
-              <div className="p-4 bg-zinc-950/50">
-                <div className="text-xs font-medium text-zinc-500 mb-3 px-1">
-                  태그로 필터링
-                </div>
-                <div className="flex flex-wrap gap-2 max-h-[40vh] overflow-y-auto custom-scrollbar">
-                  <button
-                    onClick={() => updateFilters(null, localSearch)}
-                    className={cn(
-                      "px-3 py-1.5 rounded-lg text-sm transition-all border border-transparent",
-                      selectedTag === null
-                        ? "bg-white text-black font-medium"
-                        : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-zinc-200"
-                    )}
-                  >
-                    전체
-                  </button>
-                  {allTags.map((tag) => (
-                    <button
-                      key={tag}
-                      onClick={() => updateFilters(tag, localSearch)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-sm transition-all border border-transparent",
-                        selectedTag === tag
-                          ? "bg-blue-600 text-white font-medium shadow-lg shadow-blue-500/20"
-                          : "bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-blue-500/50 hover:text-blue-400"
-                      )}
-                    >
-                      #{tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {filteredTerms.length > 0 ? (
@@ -176,17 +71,18 @@ export default function TermsClient({ initialTerms }: TermsClientProps) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 text-zinc-500 glass-panel rounded-2xl">
-          <p className="text-xl">
-            No terms found
-            {selectedTag && ` with tag #${selectedTag}`}
-            {searchQuery && ` matching "${searchQuery}"`}.
+        <div className="flex flex-col items-center justify-center py-32 text-center border border-dashed border-border rounded-2xl bg-muted/50">
+          <p className="text-xl text-muted-foreground mb-2">
+            검색 결과가 없습니다
+          </p>
+          <p className="text-muted-foreground mb-6">
+            "{searchQuery || selectedTag}"에 해당하는 용어를 찾을 수 없습니다.
           </p>
           <button
-            onClick={() => updateFilters(null, "")}
-            className="mt-4 text-blue-400 hover:text-blue-300 underline"
+            onClick={clearFilters}
+            className="px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors"
           >
-            Clear all filters
+            전체 목록 보기
           </button>
         </div>
       )}

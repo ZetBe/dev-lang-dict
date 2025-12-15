@@ -5,6 +5,7 @@ import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,16 +31,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <meta name="apple-mobile-web-app-title" content="devlangdict" />
       <GoogleTagManager gtmId="GTM-K3N5HMVM" />
+
       <body
         className={`${geistSans.variable} ${jetBrainsMono.variable} antialiased min-h-screen bg-background flex flex-col`}
       >
-        <Header />
-        <div className="flex-1">{children}</div>
-        <Analytics />
-        <Footer />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          <div className="flex-1">{children}</div>
+          <Analytics />
+          <Footer />
+        </ThemeProvider>
       </body>
       <GoogleAnalytics gaId="G-24CZP5R0DJ" />
     </html>
