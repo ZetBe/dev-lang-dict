@@ -16,6 +16,11 @@ const CURIOUS_PHRASES = [
 
 export default function CuriosityBanner() {
   const [index, setIndex] = useState(0);
+  useEffect(() => {
+    setIndex(
+      crypto.getRandomValues(new Uint32Array(1))[0] % CURIOUS_PHRASES.length
+    );
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
