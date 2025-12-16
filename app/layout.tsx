@@ -18,8 +18,9 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "개발어사전",
-  description: "개발자용 발음사전",
+  title: "개발어사전- 개발자를 위한 IT 용어 및 발음 가이드",
+  description:
+    "Shell, REST, JSON 등 헷갈리는 개발 용어의 정확한 발음과 뜻을 쉽고 빠르게 찾아보세요. 초보 개발자부터 현업 개발자까지 모두를 위한 IT 용어 사전입니다.",
   other: {
     "naver-site-verification": "b55dfa7a44db716c11ecd78111457c47743270ae",
   },
