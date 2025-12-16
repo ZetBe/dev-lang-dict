@@ -65,7 +65,7 @@ export default function Header() {
     },
     { href: "/contributors", label: "기여자", icon: Users },
     {
-      href: "https://github.com/ZetBe/dev-lang-dict/issues/new",
+      href: "https://github.com/ZetBe/dev-lang-dict/issues",
       label: "제보하기",
       icon: Flag,
       external: true,
