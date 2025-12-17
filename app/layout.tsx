@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -31,6 +32,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "개발어사전",
+    url: "https://www.devdict.site",
+    logo: "https://www.devdict.site/icon1.png",
+    sameAs: ["https://github.com/ZetBe/dev-lang-dict"],
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <meta name="apple-mobile-web-app-title" content="devlangdict" />
@@ -50,6 +60,13 @@ export default function RootLayout({
           <Analytics />
           <Footer />
         </ThemeProvider>
+
+        <Script
+          id="json-ld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </body>
       <GoogleAnalytics gaId="G-24CZP5R0DJ" />
     </html>
