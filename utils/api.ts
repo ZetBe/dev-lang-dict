@@ -63,6 +63,28 @@ export const searchTerms = async (query: string): Promise<Term[]> => {
   return data as Term[];
 };
 
+export const searchTags = async (query: string): Promise<string[]> => {
+  if (!query) return [];
+
+  const { data, error } = await supabase.from("terms").select("tags");
+
+  if (error) {
+    console.error("Error searching tags:", error);
+    return [];
+  }
+
+  const allTags = new Set<string>();
+  data.forEach((row) => {
+    if (row.tags) {
+      row.tags.forEach((tag: string) => allTags.add(tag));
+    }
+  });
+
+  return Array.from(allTags)
+    .filter((tag) => tag.toLowerCase().includes(query.toLowerCase()))
+    .slice(0, 5);
+};
+
 const fetchDailyTermsFromDB = async (cutoffDateISO: string) => {
   const { data, error } = await supabase
     .from("terms")

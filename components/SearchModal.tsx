@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { SearchIcon, X, Hash } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { searchTerms } from "@/utils/api";
+import { searchTerms, searchTags } from "@/utils/api";
 import { Term } from "@/utils/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,8 @@ interface SearchModalProps {
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Term[]>([]);
+  const [termResults, setTermResults] = useState<Term[]>([]);
+  const [tagResults, setTagResults] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -46,14 +47,19 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   useEffect(() => {
     const fetchResults = async () => {
       if (!query.trim()) {
-        setResults([]);
+        setTermResults([]);
+        setTagResults([]);
         return;
       }
 
       setIsLoading(true);
       try {
-        const data = await searchTerms(query);
-        setResults(data);
+        const [terms, tags] = await Promise.all([
+          searchTerms(query),
+          searchTags(query),
+        ]);
+        setTermResults(terms);
+        setTagResults(tags);
       } catch (error) {
         console.error("Search error:", error);
       } finally {
@@ -75,10 +81,12 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     }
   };
 
+  const hasResults = termResults.length > 0 || tagResults.length > 0;
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-100 flex flex-col bg-background/80 backdrop-blur-sm p-4 sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-background/80 backdrop-blur-sm p-4 sm:p-6 animate-in fade-in duration-200">
       <div className="absolute inset-0" onClick={onClose} />
 
       <div className="relative w-full max-w-2xl mx-auto flex flex-col gap-4">
@@ -105,40 +113,76 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         {/* Results */}
-        {(query || results.length > 0) && (
-          <div className="w-full bg-popover border border-border rounded-xl overflow-hidden shadow-2xl animate-in slide-in-from-top-2 duration-200">
+        {(query || hasResults) && (
+          <div className="w-full bg-popover border border-border rounded-xl overflow-hidden shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col max-h-[70vh]">
             {isLoading ? (
               <div className="p-4 text-center text-muted-foreground">
                 검색 중...
               </div>
-            ) : results.length > 0 ? (
-              <ul className="divide-y divide-border">
-                {results.map((term) => (
-                  <li key={term.id}>
-                    <Link
-                      href={`/terms#term-${term.id}`}
-                      onClick={onClose}
-                      className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors group"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                            {term.term}
-                          </span>
-                          {term.tags && term.tags.length > 0 && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-muted text-muted-foreground">
-                              {term.tags[0]}
+            ) : hasResults ? (
+              <div className="overflow-y-auto">
+                {/* Terms Section */}
+                {termResults.length > 0 && (
+                  <ul className="divide-y divide-border">
+                    <li className="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted/30">
+                      용어
+                    </li>
+                    {termResults.map((term) => (
+                      <li key={term.id}>
+                        <Link
+                          href={`/terms/${term.slug}`}
+                          onClick={onClose}
+                          className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors group"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                                {term.term}
+                              </span>
+                              {term.tags && term.tags.length > 0 && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-muted text-muted-foreground">
+                                  {term.tags[0]}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground line-clamp-1">
+                              {term.definition}
+                            </p>
+                          </div>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* Tags Section */}
+                {tagResults.length > 0 && (
+                  <div className="border-t border-border">
+                    <div className="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted/30 flex items-center gap-2">
+                      <Hash className="w-3 h-3" />
+                      태그
+                    </div>
+                    <ul className="divide-y divide-border">
+                      {tagResults.map((tag) => (
+                        <li key={tag}>
+                          <Link
+                            href={`/terms?tag=${tag}`}
+                            onClick={onClose}
+                            className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors group"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
+                              <Hash className="w-4 h-4" />
+                            </div>
+                            <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                              {tag}
                             </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
-                          {term.definition}
-                        </p>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             ) : query ? (
               <div className="p-8 text-center">
                 <p className="text-muted-foreground mb-2">
