@@ -1,5 +1,6 @@
 import { supabase } from "./supabaseClient";
 import { Term } from "./types";
+import { unstable_cache } from "next/cache";
 
 export const getRecentTerms = async (): Promise<Term[]> => {
   const { data, error } = await supabase
@@ -62,44 +63,38 @@ export const searchTerms = async (query: string): Promise<Term[]> => {
   return data as Term[];
 };
 
-export const getDailyTerms = async (): Promise<Term[]> => {
-  const now = new Date();
-  const adjustedTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-  const seedString = `${adjustedTime.getUTCFullYear()}-${
-    adjustedTime.getUTCMonth() + 1
-  }-${adjustedTime.getUTCDate()}`;
-
-  const { data: allTerms, error } = await supabase
+const fetchDailyTermsFromDB = async (cutoffDateISO: string) => {
+  const { data, error } = await supabase
     .from("terms")
     .select("*")
-    .lte("created_at", getCutoffISOString(adjustedTime));
-
-  function getCutoffISOString(adjDate: Date): string {
-    const target = new Date(
-      Date.UTC(
-        adjDate.getUTCFullYear(),
-        adjDate.getUTCMonth(),
-        adjDate.getUTCDate(),
-        -3,
-        0,
-        0
-      )
-    );
-
-    return target.toISOString();
-  }
+    .lte("created_at", cutoffDateISO)
+    .order("id", { ascending: true });
 
   if (error) {
     console.error("Error fetching terms for daily:", error);
     return [];
   }
+  return data as Term[];
+};
+
+const getCachedDailyTermsSource = unstable_cache(
+  async (cutoffDate: string) => fetchDailyTermsFromDB(cutoffDate),
+  ["daily-terms-source"],
+  { revalidate: 3600 }
+);
+
+export const getDailyTerms = async (): Promise<Term[]> => {
+  const now = new Date();
+  const adjustedTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+
+  const seedString = `${adjustedTime.getUTCFullYear()}-${
+    adjustedTime.getUTCMonth() + 1
+  }-${adjustedTime.getUTCDate()}`;
+
+  const cutoffISO = getCutoffISOString(adjustedTime);
+  const allTerms = await getCachedDailyTermsSource(cutoffISO);
 
   if (!allTerms || allTerms.length === 0) return [];
-
-  const shuffled = [...allTerms].sort((a, b) => {
-    const seedA = seedString + a.id;
-    return 0;
-  });
 
   const seed = xmur3(seedString);
   const rand = sfc32(seed(), seed(), seed(), seed());
@@ -110,8 +105,22 @@ export const getDailyTerms = async (): Promise<Term[]> => {
     [terms[i], terms[j]] = [terms[j], terms[i]];
   }
 
-  return terms.slice(0, 5) as Term[];
+  return terms.slice(0, 5);
 };
+
+function getCutoffISOString(adjDate: Date): string {
+  const target = new Date(
+    Date.UTC(
+      adjDate.getUTCFullYear(),
+      adjDate.getUTCMonth(),
+      adjDate.getUTCDate(),
+      -3,
+      0,
+      0
+    )
+  );
+  return target.toISOString();
+}
 
 function xmur3(str: string) {
   let h = 1779033703 ^ str.length;
