@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
-import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -19,6 +18,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.devdict.site"),
   title: "개발어사전- 개발자를 위한 IT 용어 및 발음 가이드",
   description:
     "Shell, REST, JSON 등 헷갈리는 개발 용어의 정확한 발음과 뜻을 쉽고 빠르게 찾아보세요. 초보 개발자부터 현업 개발자까지 모두를 위한 IT 용어 사전입니다.",
@@ -38,6 +38,8 @@ export default function RootLayout({
     name: "개발어사전",
     url: "https://www.devdict.site",
     logo: "https://www.devdict.site/icon1.png",
+    description:
+      "Shell, REST, JSON 등 헷갈리는 개발 용어의 정확한 발음과 뜻을 쉽고 빠르게 찾아보세요. 초보 개발자부터 현업 개발자까지 모두를 위한 IT 용어 사전입니다.",
     sameAs: ["https://github.com/ZetBe/dev-lang-dict"],
   };
 
@@ -61,11 +63,11 @@ export default function RootLayout({
           <Footer />
         </ThemeProvider>
 
-        <Script
-          id="json-ld"
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
         />
       </body>
       <GoogleAnalytics gaId="G-24CZP5R0DJ" />
