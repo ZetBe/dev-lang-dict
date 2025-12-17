@@ -51,6 +51,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${jetBrainsMono.variable} antialiased min-h-screen bg-background flex flex-col`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -62,13 +68,6 @@ export default function RootLayout({
           <Analytics />
           <Footer />
         </ThemeProvider>
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-          }}
-        />
       </body>
       <GoogleAnalytics gaId="G-24CZP5R0DJ" />
     </html>
