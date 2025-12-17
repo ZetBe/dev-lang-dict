@@ -1,75 +1,155 @@
 import Link from "next/link";
+import { ExternalLink, Github, Sparkles } from "lucide-react";
+
+interface Contributor {
+  name: string;
+  role: "Creator" | "Contributor";
+  description: string;
+  github: string;
+  terms?: string[];
+}
 
 export default function ContributorsPage() {
-  const contributors = [
+  const contributors: Contributor[] = [
     {
       name: "Kevin",
       role: "Creator",
       description: "프로젝트 기획 및 개발",
-      github: "https://github.com/ZetBe", // Placeholder
+      github: "https://github.com/ZetBe",
+    },
+    {
+      name: "daehyuh",
+      role: "Contributor",
+      description: "단어 부분 기여",
+      terms: ["JWT"],
+      github: "https://github.com/daehyuh",
     },
     // Add more contributors here
   ];
 
   return (
-    <div className="min-h-screen p-8 md:p-12 max-w-5xl mx-auto">
-      <div className="mb-12">
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground font-mono mb-4">
+    <div className="min-h-screen p-8 md:p-12 max-w-6xl mx-auto space-y-12">
+      {/* Header Section */}
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+          <Sparkles className="w-4 h-4" />
+          <span>Hall of Fame</span>
+        </div>
+        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground font-mono">
           CONTRIBUTORS
         </h1>
-        <p className="text-muted-foreground text-lg">
-          개발어사전을 함께 만들어가는 분들입니다.
+        <p className="text-muted-foreground text-lg max-w-2xl">
+          개발어사전은 여러분의 소중한 기여로 만들어집니다.
+          <br className="hidden md:block" />
+          지식을 나누고 함께 성장하는 즐거움을 경험해보세요.
         </p>
       </div>
 
+      {/* Grid Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {contributors.map((contributor, index) => (
-          <div
-            key={index}
-            className="flex flex-col bg-card border border-border p-6 rounded-2xl hover:border-primary/50 transition duration-300 group"
-          >
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center text-xl font-bold text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary transition">
-                {contributor.name[0]}
-              </div>
-              <div>
-                <h3 className="font-bold text-foreground text-lg">
-                  {contributor.name}
-                </h3>
-                <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider bg-muted px-2 py-0.5 rounded">
-                  {contributor.role}
-                </span>
-              </div>
-            </div>
+        {contributors.map((contributor, index) => {
+          // Extract GitHub username dynamically
+          const githubUsername = contributor.github.split("/").pop();
+          const avatarUrl = `https://github.com/${githubUsername}.png`;
 
-            <p className="text-muted-foreground text-sm mb-6 flex-1">
-              {contributor.description}
-            </p>
-
-            <Link
-              href={contributor.github}
-              target="_blank"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+          return (
+            <div
+              key={index}
+              className="group relative flex flex-col bg-card/50 backdrop-blur-sm border border-border p-6 rounded-3xl hover:border-primary/50 hover:shadow-lg transition-all duration-300 overflow-hidden"
             >
-              GitHub 프로필 &rarr;
-            </Link>
-          </div>
-        ))}
+              {/* Background Decoration */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 duration-500" />
+
+              <div className="relative z-10 flex items-start gap-4 mb-6">
+                <img
+                  src={avatarUrl}
+                  alt={contributor.name}
+                  className="w-16 h-16 rounded-2xl bg-muted object-cover border-2 border-transparent group-hover:border-primary transition-colors"
+                />
+                <div>
+                  <h3 className="font-bold text-foreground text-xl">
+                    {contributor.name}
+                  </h3>
+                  <span
+                    className={`inline-block mt-1 px-2 py-0.5 text-xs font-bold rounded-md uppercase tracking-wide ${
+                      contributor.role === "Creator"
+                        ? "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400"
+                        : "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                    }`}
+                  >
+                    {contributor.role}
+                  </span>
+                </div>
+              </div>
+
+              <p className="relative z-10 text-muted-foreground text-sm mb-6 flex-1 leading-relaxed">
+                {contributor.description}
+              </p>
+
+              {/* Stats / Terms */}
+              <div className="relative z-10 space-y-3 mb-6">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Contributions
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {contributor.terms && contributor.terms.length > 0 ? (
+                    contributor.terms.slice(0, 3).map((term, i) => (
+                      <span
+                        key={i}
+                        className="px-2.5 py-1 bg-muted/80 rounded-lg text-xs font-medium text-foreground border border-transparent hover:border-border transition-colors cursor-default"
+                      >
+                        {term}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-xs text-muted-foreground italic">
+                      Project Maintenance
+                    </span>
+                  )}
+                  {contributor.terms && contributor.terms.length > 3 && (
+                    <span className="px-2.5 py-1 bg-muted/50 rounded-lg text-xs font-medium text-muted-foreground">
+                      +{contributor.terms.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <Link
+                href={contributor.github}
+                target="_blank"
+                className="relative z-10 mt-auto flex items-center justify-between w-full p-3 rounded-xl bg-muted/50 hover:bg-muted text-sm font-medium transition-colors group/link"
+              >
+                <span className="flex items-center gap-2">
+                  <Github className="w-4 h-4" />
+                  GitHub Profile
+                </span>
+                <ExternalLink className="w-4 h-4 opacity-50 group-hover/link:opacity-100 transition-opacity" />
+              </Link>
+            </div>
+          );
+        })}
 
         {/* Join Us Card */}
-        <div className="flex flex-col items-center justify-center bg-primary/5 border border-primary/20 border-dashed p-6 rounded-2xl hover:bg-primary/10 transition duration-300">
-          <h3 className="font-bold text-primary text-lg mb-2">기여하기</h3>
-          <p className="text-muted-foreground text-sm text-center mb-4">
-            새로운 용어를 추가하거나
-            <br />
-            잘못된 정보를 수정해주세요.
-          </p>
+        <div className="group flex flex-col items-center justify-center p-8 rounded-3xl border-2 border-dashed border-muted-foreground/20 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+            <Sparkles className="w-8 h-8" />
+          </div>
+          <div>
+            <h3 className="font-bold text-foreground text-xl mb-2">
+              Be a Contributor
+            </h3>
+            <p className="text-muted-foreground text-sm max-w-xs">
+              새로운 단어를 등록하거나
+              <br />
+              잘못된 정보를 수정해 주세요.
+            </p>
+          </div>
           <Link
             href="https://github.com/ZetBe/dev-lang-dict"
             target="_blank"
-            className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold rounded-lg transition"
+            className="px-6 py-2.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
           >
-            GitHub 바로가기
+            GitHub Repository
           </Link>
         </div>
       </div>
