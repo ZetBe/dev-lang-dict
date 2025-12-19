@@ -1,6 +1,7 @@
 import { getDailyTerms } from "@/utils/api";
 import TermCard from "@/components/TermCard";
 import CuriosityBanner from "@/components/CuriosityBanner";
+import CountdownTimer from "@/components/CountdownTimer";
 
 export default async function Home() {
   const terms = await getDailyTerms();
@@ -20,10 +21,14 @@ export default async function Home() {
 
       <main className="w-full">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">오늘의 용어</h2>
-          <span className="text-sm text-muted-foreground">
-            매일 오전 6시 갱신
-          </span>
+          <h2 className="text-2xl font-bold">
+            오늘의 용어
+            <p className="text-sm text-muted-foreground">
+              오전 6시마다 갱신됩니다.
+            </p>
+          </h2>
+
+          <CountdownTimer />
         </div>
         {terms.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
