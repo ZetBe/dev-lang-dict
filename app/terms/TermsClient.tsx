@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Term } from "@/utils/types";
 import TermCard from "@/components/TermCard";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { Book, X } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
 
 interface TermsClientProps {
   initialTerms: Term[];
@@ -47,10 +48,14 @@ export default function TermsClient({ initialTerms }: TermsClientProps) {
   };
 
   return (
-    <div className="container mx-auto p-4 sm:p-8 py-12 relative animate-in fade-in duration-500">
-      <div className="flex flex-col gap-4 mb-12">
-        <h2 className="text-2xl font-bold text-foreground">모든 용어</h2>
-        <div className="flex items-center gap-2 text-muted-foreground">
+    <PageLayout
+      title="DICTIONARY"
+      badge="Knowledge Base"
+      badgeIcon={Book}
+      description="개발자에게 필요한 모든 용어를 담았습니다."
+    >
+      <div className="flex flex-col gap-4 mb-8">
+        <div className="flex items-center gap-2 text-muted-foreground justify-center">
           <span>총 {filteredTerms.length}개의 용어가 있습니다.</span>
           {(searchQuery || selectedTag) && (
             <button
@@ -86,6 +91,6 @@ export default function TermsClient({ initialTerms }: TermsClientProps) {
           </button>
         </div>
       )}
-    </div>
+    </PageLayout>
   );
 }

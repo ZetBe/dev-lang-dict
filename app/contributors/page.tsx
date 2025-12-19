@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ExternalLink, Github, Sparkles } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
 
 interface Contributor {
   name: string;
@@ -28,23 +29,18 @@ export default function ContributorsPage() {
   ];
 
   return (
-    <div className="min-h-screen p-8 md:p-12 max-w-6xl mx-auto space-y-12">
-      {/* Header Section */}
-      <div className="flex flex-col items-center text-center space-y-4">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-          <Sparkles className="w-4 h-4" />
-          <span>Hall of Fame</span>
-        </div>
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground font-mono">
-          CONTRIBUTORS
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">
+    <PageLayout
+      title="CONTRIBUTORS"
+      badge="Hall of Fame"
+      badgeIcon={Sparkles}
+      description={
+        <>
           개발어사전은 여러분의 소중한 기여로 만들어집니다.
           <br className="hidden md:block" />
           지식을 나누고 함께 성장하는 즐거움을 경험해보세요.
-        </p>
-      </div>
-
+        </>
+      }
+    >
       {/* Grid Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {contributors.map((contributor, index) => {
@@ -153,6 +149,6 @@ export default function ContributorsPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

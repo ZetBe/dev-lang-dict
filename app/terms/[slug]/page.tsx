@@ -2,6 +2,7 @@ import { getTermBySlug } from "@/utils/api";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import TTSButton from "@/components/TTSButton";
+import PageLayout from "@/components/PageLayout";
 
 const WarningIcon = () => (
   <svg
@@ -73,7 +74,7 @@ export default async function TermPage(props: PageProps) {
       : term.term;
 
   return (
-    <div className="min-h-screen flex flex-col p-6 md:p-12 max-w-3xl mx-auto">
+    <PageLayout maxWidth="3xl" align="left">
       {/* 상단 네비게이션 */}
       <div className="mb-12">
         <Link
@@ -199,6 +200,6 @@ export default async function TermPage(props: PageProps) {
 
       {/* 배경 장식 (너무 강하지 않게 조절) */}
       <div className="fixed top-20 right-0 w-[30rem] h-[30rem] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none -z-10 opacity-50"></div>
-    </div>
+    </PageLayout>
   );
 }

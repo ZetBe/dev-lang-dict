@@ -14,7 +14,10 @@ interface TermCardProps {
 
 export default function TermCard({ term }: TermCardProps) {
   return (
-    <Card className="h-full bg-card/50 backdrop-blur-md border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden relative group">
+    <Card className="h-full bg-card/50 backdrop-blur-md border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden relative group rounded-3xl">
+      {/* Background Decoration */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-150 duration-500 pointer-events-none" />
+
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-2xl font-jetbrains-mono font-bold text-foreground group-hover:text-primary transition-colors">
