@@ -1,16 +1,26 @@
+// api.ts
 import { supabase } from "./supabaseClient";
 import { Term } from "./types";
 import { unstable_cache } from "next/cache";
 
+const TERM_SELECT_QUERY = `
+  *,
+  terms_en (
+    definition,
+    etymology,
+    common_mistakes
+  )
+`;
+
 export const getRecentTerms = async (): Promise<Term[]> => {
   const { data, error } = await supabase
     .from("terms")
-    .select("*")
+    .select(TERM_SELECT_QUERY)
     .order("created_at", { ascending: false })
     .limit(20);
 
   if (error) {
-    console.error("Error fetching terms:", error);
+    console.error("Error fetching recent terms:", error);
     return [];
   }
 
@@ -20,7 +30,7 @@ export const getRecentTerms = async (): Promise<Term[]> => {
 export const getAllTerms = async (): Promise<Term[]> => {
   const { data, error } = await supabase
     .from("terms")
-    .select("*")
+    .select(TERM_SELECT_QUERY)
     .order("term", { ascending: true });
 
   if (error) {
@@ -34,12 +44,12 @@ export const getAllTerms = async (): Promise<Term[]> => {
 export const getTermBySlug = async (slug: string): Promise<Term | null> => {
   const { data, error } = await supabase
     .from("terms")
-    .select("*")
+    .select(TERM_SELECT_QUERY)
     .eq("slug", slug)
-    .single();
+    .maybeSingle(); // .single()은 결과가 0개면 에러를 뱉으므로 maybeSingle() 권장
 
   if (error) {
-    console.error("Error fetching term:", error);
+    console.error("Error fetching term by slug:", error);
     return null;
   }
 
@@ -51,7 +61,7 @@ export const searchTerms = async (query: string): Promise<Term[]> => {
 
   const { data, error } = await supabase
     .from("terms")
-    .select("*")
+    .select(TERM_SELECT_QUERY)
     .or(`term.ilike.%${query}%,definition.ilike.%${query}%`)
     .limit(5);
 
@@ -66,7 +76,10 @@ export const searchTerms = async (query: string): Promise<Term[]> => {
 export const searchTags = async (query: string): Promise<string[]> => {
   if (!query) return [];
 
-  const { data, error } = await supabase.from("terms").select("tags");
+  const { data, error } = await supabase
+    .from("terms")
+    .select("tags")
+    .not("tags", "is", null);
 
   if (error) {
     console.error("Error searching tags:", error);
@@ -75,7 +88,7 @@ export const searchTags = async (query: string): Promise<string[]> => {
 
   const allTags = new Set<string>();
   data.forEach((row) => {
-    if (row.tags) {
+    if (Array.isArray(row.tags)) {
       row.tags.forEach((tag: string) => allTags.add(tag));
     }
   });
@@ -88,7 +101,7 @@ export const searchTags = async (query: string): Promise<string[]> => {
 const fetchDailyTermsFromDB = async (cutoffDateISO: string) => {
   const { data, error } = await supabase
     .from("terms")
-    .select("*")
+    .select(TERM_SELECT_QUERY)
     .lte("created_at", cutoffDateISO)
     .order("id", { ascending: true });
 
@@ -101,13 +114,13 @@ const fetchDailyTermsFromDB = async (cutoffDateISO: string) => {
 
 const getCachedDailyTermsSource = unstable_cache(
   async (cutoffDate: string) => fetchDailyTermsFromDB(cutoffDate),
-  ["daily-terms-source"],
+  ["daily-terms-source-v2"],
   { revalidate: 3600 }
 );
 
 export const getDailyTerms = async (): Promise<Term[]> => {
   const now = new Date();
-  const adjustedTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  const adjustedTime = new Date(now.getTime() + 9 * 60 * 60 * 1000); // KST 보정 (+9시간)
 
   const seedString = `${adjustedTime.getUTCFullYear()}-${
     adjustedTime.getUTCMonth() + 1
@@ -136,14 +149,15 @@ function getCutoffISOString(adjDate: Date): string {
       adjDate.getUTCFullYear(),
       adjDate.getUTCMonth(),
       adjDate.getUTCDate(),
-      -3,
-      0,
-      0
+      23,
+      59,
+      59
     )
   );
   return target.toISOString();
 }
 
+// 난수 생성 함수 (기존 유지)
 function xmur3(str: string) {
   let h = 1779033703 ^ str.length;
   for (let i = 0; i < str.length; i++) {

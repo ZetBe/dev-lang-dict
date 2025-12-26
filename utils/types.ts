@@ -10,4 +10,9 @@ export interface Term {
   etymology: string | null;
   common_mistakes: string | null;
   tags: string[] | null;
+  terms_en?: {
+    definition: string | null;
+    etymology: string | null;
+    common_mistakes: string | null;
+  } | null;
 }

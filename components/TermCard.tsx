@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Term } from "@/utils/types";
 import {
@@ -7,12 +9,20 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { useLanguage } from "@/components/LanguageProvider";
 
 interface TermCardProps {
   term: Term;
 }
 
 export default function TermCard({ term }: TermCardProps) {
+  const { language } = useLanguage();
+
+  const definition =
+    language === "en" && term.terms_en?.definition
+      ? term.terms_en.definition
+      : term.definition;
+
   return (
     <Card className="h-full bg-card/50 backdrop-blur-md border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden relative group rounded-3xl">
       {/* Background Decoration */}
@@ -28,16 +38,16 @@ export default function TermCard({ term }: TermCardProps) {
               {term.term}
             </Link>
           </CardTitle>
-          {term.pronunciation_ko && (
+          {(language === "en" ? term.ipa : term.pronunciation_ko) && (
             <span className="text-xs font-jetbrains-mono text-muted-foreground border border-zinc-800 px-2 py-1 rounded ">
-              {term.pronunciation_ko}
+              {language === "en" ? term.ipa : term.pronunciation_ko}
             </span>
           )}
         </div>
       </CardHeader>
       <CardContent className="pb-4">
         <p className="text-zinc-400 line-clamp-2 text-sm pointer-events-none">
-          {term.definition}
+          {definition}
         </p>
       </CardContent>
       <CardFooter>
