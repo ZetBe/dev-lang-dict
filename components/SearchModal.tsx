@@ -8,6 +8,7 @@ import { Term } from "@/utils/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createBrowserClient } from "@supabase/ssr";
+import { useLanguage } from "./LanguageProvider";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface SearchModalProps {
 }
 
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const { t, language } = useLanguage();
   const [query, setQuery] = useState("");
   const [termResults, setTermResults] = useState<Term[]>([]);
   const [tagResults, setTagResults] = useState<string[]>([]);
@@ -99,7 +101,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="검색어를 입력하세요 (예: React, API...)"
+            placeholder={t.search_placeholder_long}
             className="w-full h-14 pl-12 pr-12 rounded-xl bg-muted/50 border border-border text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-xl"
           />
           {query && (
@@ -117,7 +119,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
           <div className="w-full bg-popover border border-border rounded-xl overflow-hidden shadow-2xl animate-in slide-in-from-top-2 duration-200 flex flex-col max-h-[70vh]">
             {isLoading ? (
               <div className="p-4 text-center text-muted-foreground">
-                검색 중...
+                {t.searching}
               </div>
             ) : hasResults ? (
               <div className="overflow-y-auto">
@@ -125,7 +127,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 {termResults.length > 0 && (
                   <ul className="divide-y divide-border">
                     <li className="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted/30">
-                      용어
+                      {t.term_label}
                     </li>
                     {termResults.map((term) => (
                       <li key={term.id}>
@@ -146,7 +148,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                               )}
                             </div>
                             <p className="text-sm text-muted-foreground line-clamp-1">
-                              {term.definition}
+                              {(language === "en" &&
+                                term.terms_en?.definition) ||
+                                term.definition}
                             </p>
                           </div>
                         </Link>
@@ -160,7 +164,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   <div className="border-t border-border">
                     <div className="px-4 py-2 text-xs font-semibold text-muted-foreground bg-muted/30 flex items-center gap-2">
                       <Hash className="w-3 h-3" />
-                      태그
+                      {t.tag_label}
                     </div>
                     <ul className="divide-y divide-border">
                       {tagResults.map((tag) => (
@@ -186,21 +190,21 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             ) : query ? (
               <div className="p-8 text-center">
                 <p className="text-muted-foreground mb-2">
-                  검색 결과가 없습니다
+                  {t.no_search_results}
                 </p>
                 <div className="flex justify-center gap-2">
                   <span className="px-2 py-1 rounded bg-muted text-xs text-muted-foreground">
-                    철자를 확인해보세요
+                    {t.check_spelling}
                   </span>
                   <span className="px-2 py-1 rounded bg-muted text-xs text-muted-foreground">
-                    영어로 입력해보세요
+                    {t.try_english}
                   </span>
                   <span className="px-2 py-1 rounded bg-muted text-xs">
                     <Link
                       href="https://github.com/ZetBe/dev-lang-dict/issues"
                       target="_blank"
                     >
-                      제안하러 가기
+                      {t.suggest_term}
                     </Link>
                   </span>
                 </div>
@@ -211,7 +215,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             {!query && (
               <div className="p-4 bg-muted/50">
                 <p className="text-xs font-semibold text-muted-foreground mb-2">
-                  추천 검색어
+                  {t.recommended_search}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {["React", "Next.js", "API", "Hydration"].map((tag) => (

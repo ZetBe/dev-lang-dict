@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import TTSButton from "@/components/TTSButton";
 import PageLayout from "@/components/PageLayout";
+import { cookies } from "next/headers";
+import { translations, Language } from "@/utils/translations";
 
 const WarningIcon = () => (
   <svg
@@ -37,7 +39,11 @@ export async function generateMetadata({ params }: PageProps) {
     };
   }
 
-  const title = `${term.term} | 개발어사전`;
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("NEXT_LOCALE")?.value as Language) || "ko";
+  const t = translations[lang];
+
+  const title = `${term.term} | ${t.app_name}`;
   const description =
     term.definition.length > 160
       ? `${term.definition.slice(0, 160)}...`
@@ -62,11 +68,23 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function TermPage(props: PageProps) {
   const params = await props.params;
   const { slug } = params;
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("NEXT_LOCALE")?.value as Language) || "ko";
+  const t = translations[lang];
+
   const term = await getTermBySlug(slug);
 
   if (!term) {
     notFound();
   }
+
+  const isEn = lang === "en";
+
+  const definition = isEn ? term.terms_en?.definition : term.definition;
+  const etymology = isEn ? term.terms_en?.etymology : term.etymology;
+  const commonMistakes = isEn
+    ? term.terms_en?.common_mistakes
+    : term.common_mistakes;
 
   const ttsText =
     term.tts_guide && term.tts_guide.length > 0
@@ -81,7 +99,7 @@ export default async function TermPage(props: PageProps) {
           href="/"
           className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm font-medium"
         >
-          ← 돌아가기
+          ← {t.back}
         </Link>
       </div>
 
@@ -117,7 +135,7 @@ export default async function TermPage(props: PageProps) {
                 <TTSButton text={ttsText} />
               </div>
               <span className="text-sm font-semibold text-muted-foreground">
-                듣기
+                {t.listen}
               </span>
             </div>
 
@@ -139,9 +157,9 @@ export default async function TermPage(props: PageProps) {
 
         {/* 2. 정의 섹션 (가장 중요하므로 박스 없이 텍스트 자체로 강조) */}
         <section className="mb-16">
-          <h3 className="sr-only">정의</h3>
+          <h3 className="sr-only">Definition</h3>
           <p className="text-2xl md:text-3xl text-foreground leading-relaxed font-light">
-            {term.definition}
+            {definition}
           </p>
         </section>
 
@@ -151,7 +169,7 @@ export default async function TermPage(props: PageProps) {
           {term.tts_guide && term.tts_guide.length > 0 && (
             <div className="bg-card border border-border p-6 rounded-2xl md:col-span-2">
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
-                발음 가이드
+                {t.pronunciation_guide}
               </h3>
               <div className="flex flex-wrap gap-2 items-center">
                 {/* 버튼 모양 대신 '음절 분해' 느낌의 UI 적용 */}
@@ -170,27 +188,27 @@ export default async function TermPage(props: PageProps) {
           )}
 
           {/* 역사 & 맥락 */}
-          {term.etymology && (
+          {etymology && (
             <div className="bg-card border border-border p-6 rounded-2xl">
               <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">
-                역사 & 맥락
+                {t.history_context}
               </h3>
               <p className="text-muted-foreground leading-relaxed text-sm">
-                {term.etymology}
+                {etymology}
               </p>
             </div>
           )}
 
           {/* 흔한 실수 (경고 스타일) */}
-          {term.common_mistakes && (
+          {commonMistakes && (
             <div className="bg-destructive/5 border border-destructive/20 p-6 rounded-2xl md:col-span-2 flex gap-4 items-start">
               <WarningIcon />
               <div>
                 <h3 className="text-xs font-bold text-destructive uppercase tracking-widest mb-2 mt-0.5">
-                  흔한 실수
+                  {t.common_mistakes}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                  {term.common_mistakes}
+                  {commonMistakes}
                 </p>
               </div>
             </div>

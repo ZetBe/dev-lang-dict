@@ -20,8 +20,10 @@ import SearchModal from "@/components/SearchModal";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { createBrowserClient } from "@supabase/ssr";
+import { useLanguage } from "./LanguageProvider";
 
 export default function Header() {
+  const { t } = useLanguage();
   const [showToast, setShowToast] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,17 +58,17 @@ export default function Header() {
   };
 
   const navItems = [
-    { href: "/terms", label: "전체보기", icon: BookOpen },
+    { href: "/terms", label: t.nav_all_terms, icon: BookOpen },
     {
       href: "#community",
-      label: "커뮤니티",
+      label: t.nav_community,
       icon: MessageSquare,
       onClick: handleCommunityClick,
     },
-    { href: "/contributors", label: "기여자", icon: Users },
+    { href: "/contributors", label: t.nav_contributors, icon: Users },
     {
       href: "https://github.com/ZetBe/dev-lang-dict/issues",
-      label: "제보하기",
+      label: t.nav_report,
       icon: Flag,
       external: true,
     },
@@ -87,7 +89,7 @@ export default function Header() {
                 className="w-8 h-8 rounded-full"
               />
               <span className="text-lg font-bold text-foreground hidden sm:block">
-                개발어사전
+                {t.app_name}
               </span>
             </Link>
 
@@ -96,7 +98,7 @@ export default function Header() {
               className="hidden md:flex flex-1 items-center gap-3 px-4 py-2.5 rounded hover:bg-zinc-800 hover:text-zinc-200 transition-all border border-zinc-700 hover:border-zinc-700 group w-full max-w-md"
             >
               <SearchIcon className="h-4 w-4 group-hover:text-blue-400 transition-colors" />
-              <span className="text-sm">검색...</span>
+              <span className="text-sm">{t.search_placeholder}</span>
               <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-zinc-700 px-1.5 font-mono text-[10px] font-medium ml-auto opacity-50">
                 <span className="text-xs">⌘</span>K
               </kbd>
@@ -178,7 +180,7 @@ export default function Header() {
               >
                 <LogOut className="h-6 w-6 text-zinc-400 group-hover:text-red-400 transition-colors" />
                 <span className="text-[10px] text-zinc-400 group-hover:text-red-400 transition-colors hidden sm:block">
-                  로그아웃
+                  {t.logout}
                 </span>
               </button>
             ) : (
@@ -188,7 +190,7 @@ export default function Header() {
               >
                 <LogIn className="h-6 w-6 text-zinc-400 group-hover:text-blue-400 transition-colors" />
                 <span className="text-[10px] text-zinc-400 group-hover:text-blue-400 transition-colors hidden sm:block">
-                  로그인
+                  {t.login}
                 </span>
               </Link>
             )}
@@ -210,7 +212,7 @@ export default function Header() {
             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 rounded-lg border border-zinc-800 bg-zinc-950 px-6 py-3 text-sm text-white shadow-2xl flex items-center gap-3"
           >
             <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-            🚧 커뮤니티 기능은 준비 중입니다
+            {t.community_coming_soon}
           </motion.div>
         )}
       </AnimatePresence>

@@ -6,6 +6,9 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/components/LanguageProvider";
+import LanguageSelector from "@/components/LanguageSelector";
+import { cookies } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +30,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("NEXT_LOCALE")?.value as "en" | "ko") || "ko";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -44,7 +50,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <meta name="apple-mobile-web-app-title" content="devlangdict" />
       <GoogleTagManager gtmId="GTM-K3N5HMVM" />
 
@@ -63,10 +69,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <div className="flex-1">{children}</div>
-          <Analytics />
-          <Footer />
+          <LanguageProvider initialLanguage={lang}>
+            <Header />
+            <div className="flex-1">{children}</div>
+            <Analytics />
+            <Footer />
+            <LanguageSelector />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
       <GoogleAnalytics gaId="G-24CZP5R0DJ" />

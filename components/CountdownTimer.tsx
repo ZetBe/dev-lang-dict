@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function CountdownTimer() {
+  const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function CountdownTimer() {
   if (!timeLeft) {
     return (
       <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-        매일 오전 6시 갱신
+        {t.timer_reset_daily}
       </span>
     );
   }
@@ -53,7 +55,9 @@ export default function CountdownTimer() {
   return (
     <span className="flex items-center gap-1.5 text-sm font-medium text-primary animate-in fade-in duration-300">
       <Clock className="w-3.5 h-3.5" />
-      <span>다음 갱신까지 {timeLeft}</span>
+      <span>
+        {t.timer_next_update} {timeLeft}
+      </span>
     </span>
   );
 }

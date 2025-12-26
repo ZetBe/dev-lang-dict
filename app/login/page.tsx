@@ -10,12 +10,16 @@ import { useState, useRef } from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 export default function LoginPage() {
+  const { t } = useLanguage();
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+  // ... (Animation logic remains the same)
   // --- Animation Logic Start ---
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -99,14 +103,12 @@ export default function LoginPage() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">환영합니다</h1>
-            <p className="text-balance text-muted-foreground">
-              이메일은 아직 지원되지 않습니다. 소셜 계정을 이용해주세용
-            </p>
+            <h1 className="text-3xl font-bold">{t.login_welcome}</h1>
+            <p className="text-balance text-muted-foreground">{t.login_desc}</p>
           </div>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <label htmlFor="email">이메일</label>
+              <label htmlFor="email">{t.email_label}</label>
               <Input
                 id="email"
                 type="email"
@@ -116,12 +118,12 @@ export default function LoginPage() {
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
-                <label htmlFor="password">비밀번호</label>
+                <label htmlFor="password">{t.password_label}</label>
                 <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline text-muted-foreground hover:text-primary"
                 >
-                  비밀번호를 잊으셨나요?
+                  {t.forgot_password}
                 </Link>
               </div>
               <Input id="password" type="password" required />
@@ -137,12 +139,12 @@ export default function LoginPage() {
                 htmlFor="remember"
                 className="text-sm text-muted-foreground"
               >
-                30일간 로그인 유지
+                {t.remember_me}
               </label>
             </div>
 
             <Button type="submit" className="w-full">
-              로그인
+              {t.login_button}
             </Button>
           </div>
 
@@ -152,7 +154,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                또는 소셜 계정으로 계속
+                {t.or_continue_with}
               </span>
             </div>
           </div>
@@ -181,7 +183,7 @@ export default function LoginPage() {
                   fill="#EA4335"
                 />
               </svg>
-              Google로 계속하기
+              {t.continue_with_google}
             </Button>
             <Button
               variant="outline"
@@ -189,14 +191,14 @@ export default function LoginPage() {
               className="w-full"
             >
               <Github className="mr-2 h-4 w-4" />
-              GitHub로 계속하기
+              {t.continue_with_github}
             </Button>
           </div>
 
           <div className="mt-4 text-center text-sm">
-            계정이 없으신가요?{" "}
+            {t.no_account}{" "}
             <Link href="#" className="underline hover:text-primary">
-              회원가입
+              {t.signup}
             </Link>
           </div>
         </div>
@@ -232,7 +234,7 @@ export default function LoginPage() {
 
           <div className="max-w-md space-y-2 pointer-events-none">
             <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              개발어사전
+              {t.app_name}
             </h2>
           </div>
         </div>

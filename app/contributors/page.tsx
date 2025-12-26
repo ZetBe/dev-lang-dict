@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ExternalLink, Github, Sparkles } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import { cookies } from "next/headers";
+import { translations, Language } from "@/utils/translations";
 
 interface Contributor {
   name: string;
@@ -10,18 +12,22 @@ interface Contributor {
   terms?: string[];
 }
 
-export default function ContributorsPage() {
+export default async function ContributorsPage() {
+  const cookieStore = await cookies();
+  const lang = (cookieStore.get("NEXT_LOCALE")?.value as Language) || "ko";
+  const t = translations[lang];
+
   const contributors: Contributor[] = [
     {
       name: "Kevin",
       role: "Creator",
-      description: "프로젝트 기획 및 개발",
+      description: t.role_creator,
       github: "https://github.com/ZetBe",
     },
     {
       name: "daehyuh",
       role: "Contributor",
-      description: "단어 부분 기여",
+      description: t.role_contributor,
       terms: ["JWT"],
       github: "https://github.com/daehyuh",
     },
@@ -30,16 +36,10 @@ export default function ContributorsPage() {
 
   return (
     <PageLayout
-      title="CONTRIBUTORS"
-      badge="Hall of Fame"
+      title={t.contributors_title}
+      badge={t.contributors_badge}
       badgeIcon={Sparkles}
-      description={
-        <>
-          개발어사전은 여러분의 소중한 기여로 만들어집니다.
-          <br className="hidden md:block" />
-          지식을 나누고 함께 성장하는 즐거움을 경험해보세요.
-        </>
-      }
+      description={<>{t.contributors_desc}</>}
     >
       {/* Grid Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -85,7 +85,7 @@ export default function ContributorsPage() {
               {/* Stats / Terms */}
               <div className="relative z-10 space-y-3 mb-6">
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Contributions
+                  {t.contributions_label}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {contributor.terms && contributor.terms.length > 0 ? (
@@ -99,7 +99,7 @@ export default function ContributorsPage() {
                     ))
                   ) : (
                     <span className="text-xs text-muted-foreground italic">
-                      Project Maintenance
+                      {t.project_maintenance}
                     </span>
                   )}
                   {contributor.terms && contributor.terms.length > 3 && (
@@ -117,7 +117,7 @@ export default function ContributorsPage() {
               >
                 <span className="flex items-center gap-2">
                   <Github className="w-4 h-4" />
-                  GitHub Profile
+                  {t.github_profile}
                 </span>
                 <ExternalLink className="w-4 h-4 opacity-50 group-hover/link:opacity-100 transition-opacity" />
               </Link>
@@ -132,12 +132,10 @@ export default function ContributorsPage() {
           </div>
           <div>
             <h3 className="font-bold text-foreground text-xl mb-2">
-              Be a Contributor
+              {t.be_a_contributor}
             </h3>
             <p className="text-muted-foreground text-sm max-w-xs">
-              새로운 단어를 등록하거나
-              <br />
-              잘못된 정보를 수정해 주세요.
+              {t.contributor_cta}
             </p>
           </div>
           <Link
@@ -145,7 +143,7 @@ export default function ContributorsPage() {
             target="_blank"
             className="px-6 py-2.5 bg-primary text-primary-foreground text-sm font-bold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
           >
-            GitHub Repository
+            {t.github_repo}
           </Link>
         </div>
       </div>
