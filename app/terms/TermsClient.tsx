@@ -52,8 +52,8 @@ export default function TermsClient({ initialTerms }: TermsClientProps) {
 
   return (
     <PageLayout
-      title={t.dictionary_title}
-      badge={t.knowledge_base}
+      title="Dictionary"
+      badge="Knowledge Base"
       badgeIcon={Book}
       description={t.dictionary_description}
     >
