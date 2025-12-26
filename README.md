@@ -19,12 +19,13 @@
 
 ### 1. 홈 (Home)
 
-<img width="1914" height="769" alt="image" src="https://github.com/user-attachments/assets/75ee0923-cc1d-4964-8209-47b087f25145" />
+<img width="1917" height="861" alt="image" src="https://github.com/user-attachments/assets/2bbca306-c229-420a-a219-a31b4ae55f58" />
+
 
 
 - 개발어사전의 메인 페이지입니다.
 - 최근 등록된 기술 용어들을 카드 형태로 확인할 수 있습니다.
-- '오늘의 호기심' 배너를 통해 흥미로운 개발 상식을 제공합니다.
+- '오늘의 용어' 배너를 통해 흥미로운 개발 상식을 제공합니다.
 
 ### 2. 전체보기 (All Terms)
 
