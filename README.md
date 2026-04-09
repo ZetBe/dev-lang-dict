@@ -5,7 +5,6 @@
 
 ## 🛠 적용한 기술 (Tech Stack)
 
-최대한 최신 기술들을 적용했습니다.
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Directory, Turbopack)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
